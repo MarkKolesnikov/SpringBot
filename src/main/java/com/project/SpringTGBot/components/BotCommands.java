@@ -1,2 +1,4 @@
-package com.project.SpringTGBot.components;public class BotCommands {
+package com.project.SpringTGBot.components;
+
+public interface BotCommands {
 }
