@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -26,6 +27,7 @@ import static com.project.SpringTGBot.components.BotCommands.LIST_OF_COMMANDS;
 public class CounterTelegramBot extends TelegramLongPollingBot {
     final BotConfig config;
 
+    @Autowired
     public CounterTelegramBot(BotConfig config) {
         this.config = config;
         try {
@@ -37,7 +39,7 @@ public class CounterTelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return config.getBotName();
+        return config.getToken();
     }
 
     @Override
@@ -51,7 +53,6 @@ public class CounterTelegramBot extends TelegramLongPollingBot {
         long userId = 0;
         String userName = null;
         String receivedMessage;
-
 
         if (update.hasMessage()) {
             chatId = update.getMessage().getChatId();
@@ -71,6 +72,9 @@ public class CounterTelegramBot extends TelegramLongPollingBot {
 
             botAnswerUtils(receivedMessage, chatId, userName);
         }
+        if (chatId == Long.valueOf(config.getChatId())) {
+            UpdateDB(userId, userName);
+        }
     }
 
     private void botAnswerUtils(String receivedMessage, long chatId, String userName) {
@@ -79,7 +83,7 @@ public class CounterTelegramBot extends TelegramLongPollingBot {
                 startBot(chatId, userName);
                 break;
             case "/help":
-                senddHelpText(chatId, HELP_TEXT);
+                sendHelpText(chatId, HELP_TEXT);
         }
     }
 
@@ -97,7 +101,7 @@ public class CounterTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void senddHelpText(long chatId, String textToSend) {
+    private void sendHelpText(long chatId, String textToSend) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(textToSend);
@@ -113,7 +117,7 @@ public class CounterTelegramBot extends TelegramLongPollingBot {
     @Autowired
     private UserRepository userRepository;
 
-    private void UpdateDB(Long userId, String userName) {
+    private void UpdateDB(long userId, String userName) {
         if (userRepository.findById(userId).isEmpty()) {
             User user = new User();
             user.setId(userId);
