@@ -12,13 +12,13 @@ target/
 .settings
 .springBeans
 .sts4-cache
+SpringBot/src/main/resources/config.properties
 
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
-SpringBot/src/main/resources/config.properties
 
 ### NetBeans ###
 /nbproject/private/
